@@ -24,7 +24,7 @@ public class AuthTools {
     public static final String INVALID_PASS = "Invalid password";
     public static final String INVALID_NAME = "Invalid user name";
     public static final String CORRECT = "Correct";
-    private static SecretKeySpec key;
+    private static final String KEY = "some-secret-key-of-your-choice";
     private static Map<Integer, Pair<String, String>> passwordMap = new HashMap<>();
 
     public static void addUser ( Integer accountNumber, String password, String userName){
@@ -65,34 +65,21 @@ public class AuthTools {
         }
     }
 
-    public static void initialize() throws NoSuchAlgorithmException, InvalidKeySpecException{
-        String password = "1AS12s32dw";
-        byte[] salt = new String("12345678").getBytes();
-        int iterationCount = 40000;
-        // Other values give me java.security.InvalidKeyException: Illegal key size or default parameters
-        int keyLength = 128;
-        key = createSecretKey(password.toCharArray(),
-                salt, iterationCount, keyLength);
+    private static String encrypt(final String text) {
+        return Base64.getEncoder().encode(xor(text.getBytes())).toString();
     }
 
-    private static SecretKeySpec createSecretKey(char[] password, byte[] salt, int iterationCount, int keyLength) throws NoSuchAlgorithmException, InvalidKeySpecException {
-        SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA512");
-        PBEKeySpec keySpec = new PBEKeySpec(password, salt, iterationCount, keyLength);
-        SecretKey keyTmp = keyFactory.generateSecret(keySpec);
-        return new SecretKeySpec(keyTmp.getEncoded(), "AES");
-    }
-
-    public static String encrypt(String property) throws GeneralSecurityException, UnsupportedEncodingException {
-        Cipher pbeCipher = Cipher.getInstance("AES");
-        pbeCipher.init(Cipher.ENCRYPT_MODE, key);
-        AlgorithmParameters parameters = pbeCipher.getParameters();
-        IvParameterSpec ivParameterSpec = parameters.getParameterSpec(IvParameterSpec.class);
-        byte[] cryptoText = pbeCipher.doFinal(property.getBytes("UTF-8"));
-        byte[] iv = ivParameterSpec.getIV();
-        return base64Encode(iv) + ":" + base64Encode(cryptoText);
-    }
-
-    private static String base64Encode(byte[] bytes) {
-        return Base64.getEncoder().encodeToString(bytes);
+    private static byte[] xor(final byte[] input) {
+        final byte[] output = new byte[input.length];
+        final byte[] secret = KEY.getBytes();
+        int spos = 0;
+        for (int pos = 0; pos < input.length; ++pos) {
+            output[pos] = (byte) (input[pos] ^ secret[spos]);
+            spos += 1;
+            if (spos >= secret.length) {
+                spos = 0;
+            }
+        }
+        return output;
     }
 }

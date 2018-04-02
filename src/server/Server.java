@@ -109,6 +109,10 @@ public class Server {
                 return "Invalid_operation";
         }
         String error = sendReply(reply, clientAddress, clientPort);
+        List<String>payLoads = reply.getPayLoads();
+        for(int i=0;i<payLoads.size();i++){
+            System.out.println( "--" + payLoads.get(i));
+        }
         if (error != null) {
             return error;
         }
@@ -120,7 +124,7 @@ public class Server {
 
     public Reply processSignupRequest(Request request, String requestKey) {
         List<String>result = new ArrayList<>();
-        result.add(request.getId());
+        result.add(request.getType());
         Integer accountId = BankingSystem.createUser(request.getPayLoads());
         result.add(accountId.toString());
         Reply reply = Reply.constructReply(false, result);
@@ -145,6 +149,7 @@ public class Server {
         if (socket.getErrMsg() != null) {
             return socket.getErrMsg();
         }
+        socket.sendPacket(packet);
         return null;
     }
 }

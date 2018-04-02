@@ -19,20 +19,25 @@ public class Client {
 	
 	private InetAddress serverIp;
 	private int serverPort;
+	private int clientPort;
     private SocketWrapper socket;
 
-    public Client(InetAddress serverIp, int serverPort){
+    public Client(InetAddress serverIp, int serverPort, int clientPort){
     	this.serverIp = serverIp;
         this.serverPort = serverPort;
+		this.clientPort = clientPort;
     }
     public void start() throws SocketException {
-        socket = new SocketWrapper(serverPort);
+        socket = new SocketWrapper(clientPort);
     }
     
     public void handleReply(Reply reply){
     	int replyStatus = reply.getStatusCode();
     	String replyErrMsg = reply.getErrMsg();
     	ArrayList<String> payloads = reply.getPayLoads();
+		for(int i=0;i<payloads.size();i++){
+			System.out.println(payloads.get(i));
+		}
     	if (replyStatus == Reply.ERROR_REPLY_CODE){
     		System.out.printf("Error: %s\n", replyErrMsg);
     	} else{

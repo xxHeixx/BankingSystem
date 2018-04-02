@@ -22,10 +22,11 @@ public class ClientMain {
 	private static final String HELPCODE = "h";
 	
 	public static void main(String[] args) throws IOException {
-		InetAddress serverIp = InetAddress.getByName(args[0]);
-		int serverPort = Integer.parseInt(args[1]);
+        int clientPort = Integer.parseInt(args[0]);
+		InetAddress serverIp = InetAddress.getByName(args[1]);
+		int serverPort = Integer.parseInt(args[2]);
 
-        Client client = new Client(serverIp, serverPort);
+        Client client = new Client(serverIp, serverPort, clientPort);
         try {
             client.start();
         } catch (Exception e) {
@@ -49,7 +50,8 @@ public class ClientMain {
                 case Request.DEPOSIT:
                 case Request.TRANSFER:
                 case Request.WITHDRAW:
-                	error = client.sendRequest(params[0], (ArrayList<String>) Arrays.asList(params));
+                    ArrayList<String> data = new ArrayList<>(Arrays.asList(params));
+                	error = client.sendRequest(params[0],data);
                     if (error != null) {
                         System.out.printf("Error with operation %s: %s\n",params[0], error);
                     }
