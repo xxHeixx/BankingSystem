@@ -6,12 +6,12 @@ import java.util.Scanner;
 
 public class Request {
 
-    private static final String SIGN_UP = "s";
-    private static final String CLOSE = "c";
-    private static final String WITHDRAW = "w";
-    private static final String DEPOSIT = "d";
-    private static final String BALANCE = "b";
-    private static final String TRANSFER = "t";
+    public static final String SIGN_UP = "s";
+    public static final String CLOSE = "c";
+    public static final String WITHDRAW = "w";
+    public static final String DEPOSIT = "d";
+    public static final String BALANCE = "b";
+    public static final String TRANSFER = "t";
     private static int counter = 0;
 
     private String type;
