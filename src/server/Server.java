@@ -8,7 +8,9 @@ import shared.SocketWrapper;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Server {
@@ -57,7 +59,6 @@ public class Server {
      */
     public String processRequest() {
         String error = null;
-        Reply reply = null;
         DatagramPacket packet = socket.receivePacket();
 
         if (socket.getErrMsg() != null) {
@@ -68,21 +69,75 @@ public class Server {
         String requestKey = packet.getAddress().getHostAddress() + '[' + request.getId() + ']';
 
         if (mode == InvocationSemantics.AT_MOST_ONCE && replyRecord.containsKey(requestKey)) {
-            reply = replyRecord.get(requestKey);
+            Reply reply = replyRecord.get(requestKey);
+            error = sendReply(reply, packet.getAddress(), packet.getPort());
         } else {
             try {
-                reply = handleRequest(request, requestKey);
-                if (mode == InvocationSemantics.AT_MOST_ONCE) {
-                    replyRecord.put(requestKey, reply);
-                }
-            } catch (NullPointerException e) {
+                error = handleRequest(request, requestKey, packet.getAddress(), packet.getPort());
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-        error = sendReply(reply, packet.getAddress(), packet.getPort());
         return error;
     }
 
+    /**
+     * Handle Request request with specific handle method respect to request type.
+     * Return null if no error handling and processing request, else return error message.
+     * @param request
+     * @param requestKey
+     * @return
+     */
+    private String handleRequest(Request request, String requestKey, InetAddress clientAddress, int clientPort) {
+        Reply reply = null;
+        switch (request.getType()) {
+            case Request.SIGN_UP:
+                reply =  processSignupRequest(request, requestKey);
+                break;
+            case Request.CLOSE:
+                reply =  processCloseRequest(request, requestKey);
+                break;
+//            case Request.WITHDRAW:
+//                return processEditBookingRequest(request, requestKey);
+//            case Request.DEPOSIT:
+//                return processMonitorRequest(request, requestKey);
+//            case Request.BALANCE:
+//                return processCancelBookingRequest(request, requestKey);
+//            case Request.TRANSFER:
+//                return processGetAllAvailableInTimeRangeRequest(request, requestKey);
+            default:
+                return "Invalid_operation";
+        }
+        String error = sendReply(reply, clientAddress, clientPort);
+        if (error != null) {
+            return error;
+        }
+        if (mode == InvocationSemantics.AT_MOST_ONCE) {
+            replyRecord.put(requestKey, reply);
+        }
+        return null;
+    }
+
+    public Reply processSignupRequest(Request request, String requestKey) {
+        List<String>result = new ArrayList<>();
+        result.add(request.getId());
+        Integer accountId = BankingSystem.createUser(request.getPayLoads());
+        result.add(accountId.toString());
+        Reply reply = Reply.constructReply(false, result);
+        return reply;
+    }
+
+    public Reply processCloseRequest(Request request, String requestKey) {
+        List<String>result = new ArrayList<>();
+        result.add(request.getId());
+        List<String>payLoads = request.getPayLoads();
+        String userName = payLoads.get(0);
+        Integer accountNumber = Integer.valueOf(payLoads.get(1));
+        String passWord = payLoads.get(2);
+        String authCheck = AuthTools.checkUser(accountNumber, passWord, userName);
+        Reply reply = Reply.constructReply(false, result);
+        return reply;
+    }
 
     public String sendReply(Reply reply, InetAddress clientHost, int clientPort) {
         byte[] data = Reply.marshal(reply);
