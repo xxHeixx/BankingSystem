@@ -9,29 +9,30 @@ public enum Currency {
     EUR ("EUR", 1.61),
     BGP ("GBP", 1.84);
 
-    private final String id;
+    private final String abbrv;
     private final double rate;
     private static Map<String, Currency> map = new HashMap<String, Currency>();
 
     static {
         for (Currency currencyEnum : Currency.values()) {
-            map.put(currencyEnum.id, currencyEnum);
+            map.put(currencyEnum.abbrv, currencyEnum);
         }
     }
 
-    Currency (String id, double rate) {
-        this.id = id;
+    Currency (String abbrv, double rate) {
+        this.abbrv = abbrv;
         this.rate = rate;
     }
 
     public String getAbbrv() {
-        return this.id;
+        return this.abbrv;
     }
 
     public double getRate() {
         return this.rate;
     }
-    public static Currency valueOf (int String) {
-        return map.get(String);
+
+    public static Currency valueFromString (String abbrv) {
+        return map.get(abbrv);
     }
 }
