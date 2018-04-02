@@ -6,8 +6,8 @@ import java.util.Scanner;
 
 public class Request {
 
-    public static final String SIGN_UP = "su";
-    public static final String SIGN_OUT = "so";
+    public static final String SIGN_UP = "s";
+    public static final String QUIT = "q";
     public static final String CLOSE = "c";
     public static final String WITHDRAW = "w";
     public static final String DEPOSIT = "d";

@@ -15,10 +15,10 @@ public class ClientMain {
 		= "List of available operations (parameters must be seperated by ','):\n\n"
 		+ "Sign up new account: s,<name>,<password>,<currency>,<initial_balance>\n"
 		+ "Close account: c,<name>,<account_number>,<password>\n"
-		+ "Check account's balance: b,<account_number>,<password>\n"
-		+ "Deposit money: d,<account_number>,<password>,<amount>\n"
-		+ "Withdraw money: w,<account_number>,<password>,<amount>\n"
-		+ "Transfer money: t,<account_number>,<password>,<received_account_number>,<amount>\n";
+		+ "Check account's balance: b,<name>,<account_number>,<password>\n"
+		+ "Deposit money: d,<name>,<account_number>,<password>,<amount>\n"
+		+ "Withdraw money: w,<name>,<account_number>,<password>,<amount>\n"
+		+ "Transfer money: t,<name>,<account_number>,<password>,<received_account_number>,<amount>\n";
 	private static final String HELPCODE = "h";
 	
 	public static void main(String[] args) throws IOException {

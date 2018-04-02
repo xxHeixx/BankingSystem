@@ -37,5 +37,12 @@ public class BankingSystem {
         return true;
 
     }
+    
+    public static Integer checkBalance(List<String> payLoads) {
+    	Integer accountId = Integer.valueOf(payLoads.get(0));
+        String password = payLoads.get(1);
+        
+        return accountId;
+    }
 
 }
