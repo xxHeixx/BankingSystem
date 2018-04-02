@@ -1,9 +1,8 @@
-package server;
+package shared;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.InetAddress;
 import java.net.SocketException;
 
 public class SocketWrapper {
@@ -23,7 +22,7 @@ public class SocketWrapper {
         return this.errMsg;
     }
 
-    public DatagramPacket receiveRequest() {
+    public DatagramPacket sendPacket() {
         this.errMsg = null;
         byte[] data = new byte[MAX_PACKET_SIZE];
         DatagramPacket packet = new DatagramPacket(data, data.length);

@@ -1,5 +1,7 @@
 package server;
 
+import shared.SocketWrapper;
+
 import java.net.SocketException;
 import java.util.HashMap;
 import java.util.Map;
