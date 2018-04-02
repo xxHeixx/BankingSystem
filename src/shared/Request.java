@@ -16,7 +16,6 @@ public class Request {
 
     private String type;
     private String id;
-    private String accountId;
     private List<String> payLoads = new ArrayList<>();
 
     public String getType() {
@@ -27,34 +26,27 @@ public class Request {
         return id;
     }
 
-    public String getAccountId() {
-        return accountId;
-    }
-
     public List<String> getPayLoads() {
         return payLoads;
     }
 
-    public static Request createRequest(String type, String accountId, List<String>payLoads) {
-        return new Request(String.valueOf(counter++), type, accountId, payLoads );
+    public static Request createRequest(String type, List<String>payLoads) {
+        return new Request(String.valueOf(counter++), type, payLoads );
     }
 
-    private Request(String id, String type, String accountId, List<String>payLoads) {
+    private Request(String id, String type, List<String>payLoads) {
         this.id = id;
         this.type = type;
-        this.accountId = accountId;
         this.payLoads.addAll(payLoads);
     }
 
     public static byte[] marshal(Request request) {
         String requestType = request.getType();
         String requestId = request.getId();
-        String requestUserId = request.getAccountId();
         List<String> payLoads = request.getPayLoads();
         StringBuilder data = new StringBuilder();
         data.append(requestId).append(Constant.REQUEST_DELIM);
         data.append(requestType).append(Constant.REQUEST_DELIM);
-        data.append(requestUserId).append(Constant.REQUEST_DELIM);
         data.append(payLoads.size()).append(Constant.REQUEST_DELIM);
         for (String payload: payLoads) {
             data.append(payload).append(Constant.REQUEST_DELIM);
@@ -67,7 +59,6 @@ public class Request {
         Scanner scanner = new Scanner(dataStr);
         String requestId = scanner.next();
         String requestType = scanner.next();
-        String requestUserId = scanner.next();
         int payloadSize = scanner.nextInt();
         List<String> payloads = new ArrayList<>();
         for (int i = 0; i < payloadSize; i++) {
@@ -75,7 +66,7 @@ public class Request {
             payloads.add(s);
         }
         scanner.close();
-        return new Request(requestId, requestType, requestUserId, payloads);
+        return new Request(requestId, requestType, payloads);
     }
 
 }
