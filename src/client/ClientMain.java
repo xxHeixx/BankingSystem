@@ -12,7 +12,13 @@ import shared.Request;
 public class ClientMain {
 	private static final String INSTRUCTION = "Input your operation (input h for help):\n";
 	private static final String HELPTEXT 
-		= "";
+		= "List of available operations (parameters must be seperated by ','):\n\n"
+		+ "Sign up new account: s,<name>,<password>,<currency>,<initial_balance>\n"
+		+ "Close account: c,<name>,<account_number>,<password>\n"
+		+ "Check account's balance: b,<account_number>,<password>\n"
+		+ "Deposit money: d,<account_number>,<password>,<amount>\n"
+		+ "Withdraw money: w,<account_number>,<password>,<amount>\n"
+		+ "Transfer money: t,<account_number>,<password>,<received_account_number>,<amount>\n";
 	private static final String HELPCODE = "h";
 	
 	public static void main(String[] args) throws IOException {
