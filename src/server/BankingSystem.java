@@ -9,6 +9,15 @@ public class BankingSystem {
 
     private static Map<Integer, AccountInfo> index = new HashMap<Integer, AccountInfo>();
 
+    public static String checkUser(Integer accountNumber, String password, String userName) {
+        String authResult = AuthTools.checkUser(accountNumber, password, userName);
+        if (authResult != AuthTools.CORRECT) {
+            return authResult;
+        } else {
+            return null;
+        }
+    }
+
     public static Integer createUser(List<String> payLoads) {
         String userName = payLoads.get(0);
         String password = payLoads.get(1);

@@ -2,22 +2,9 @@ package server;
 
 import javafx.util.Pair;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.security.AlgorithmParameters;
-import java.security.GeneralSecurityException;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
-import javax.crypto.Cipher;
-import javax.crypto.SecretKey;
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.PBEKeySpec;
-import javax.crypto.spec.SecretKeySpec;
 
 public class AuthTools {
     public static final String INVALID_ACC = "Invalid account number";
@@ -30,6 +17,7 @@ public class AuthTools {
     public static void addUser ( Integer accountNumber, String password, String userName){
         try {
             String encryptedPassword = encrypt(password);
+            System.out.println(encryptedPassword);
             Pair<String, String> entryInfo = new Pair<>(encryptedPassword, userName);
             passwordMap.put(accountNumber, entryInfo);
         } catch (Exception e) {
@@ -40,6 +28,7 @@ public class AuthTools {
     public static String checkUser (Integer accountNumber, String password, String userName){
         try {
             String encryptedPassword = encrypt(password);
+            System.out.println("---" + encryptedPassword);
             if (!passwordMap.containsKey(accountNumber)) {
                 return INVALID_ACC;
             }
@@ -66,20 +55,8 @@ public class AuthTools {
     }
 
     private static String encrypt(final String text) {
-        return Base64.getEncoder().encode(xor(text.getBytes())).toString();
+        byte[] bytesEncoded = Base64.getEncoder().encode(text.getBytes());
+        return new String(bytesEncoded);
     }
 
-    private static byte[] xor(final byte[] input) {
-        final byte[] output = new byte[input.length];
-        final byte[] secret = KEY.getBytes();
-        int spos = 0;
-        for (int pos = 0; pos < input.length; ++pos) {
-            output[pos] = (byte) (input[pos] ^ secret[spos]);
-            spos += 1;
-            if (spos >= secret.length) {
-                spos = 0;
-            }
-        }
-        return output;
-    }
 }

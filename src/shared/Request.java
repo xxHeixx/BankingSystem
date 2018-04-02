@@ -57,7 +57,7 @@ public class Request {
 
     public static Request unmarshal(byte[] data) {
         String dataStr = new String(data);
-        Scanner scanner = new Scanner(dataStr);
+        Scanner scanner = new Scanner(dataStr).useDelimiter(Constant.REQUEST_DELIM);
         String requestId = scanner.next();
         String requestType = scanner.next();
         int payloadSize = scanner.nextInt();

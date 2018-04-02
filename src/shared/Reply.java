@@ -27,7 +27,7 @@ public class Reply {
     private Reply(int statusCode, List<String> payLoads) {
         this.statusCode = statusCode;
         if (statusCode == ERROR_REPLY_CODE) {
-            this.errMsg = payLoads.get(0);
+            this.errMsg = payLoads.get(1);
         }
         this.payLoads.addAll(payLoads);
     }
@@ -39,7 +39,7 @@ public class Reply {
 
     public static Reply unmarshal(byte[] data) {
         String dataStr = new String(data);
-        Scanner scanner = new Scanner(dataStr);
+        Scanner scanner = new Scanner(dataStr).useDelimiter(Constant.REQUEST_DELIM);
         int statusCode = scanner.nextInt();
         int payloadSize = scanner.nextInt();
         List<String> payloads = new ArrayList<>();

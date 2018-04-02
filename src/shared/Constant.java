@@ -1,7 +1,7 @@
 package shared;
 
 public class Constant {
-    public static final String REQUEST_DELIM = " ";
+    public static final String REQUEST_DELIM = ",";
     public static final String DATETIME_DELIM = "-";
     public static final String DAY_DELIM = ",";
     public static boolean DEBUG = true;

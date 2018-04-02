@@ -132,14 +132,22 @@ public class Server {
     }
 
     public Reply processCloseRequest(Request request, String requestKey) {
+        boolean hasError = false;
         List<String>result = new ArrayList<>();
-        result.add(request.getId());
+        result.add(request.getType());
         List<String>payLoads = request.getPayLoads();
         String userName = payLoads.get(0);
         Integer accountNumber = Integer.valueOf(payLoads.get(1));
         String passWord = payLoads.get(2);
-        String authCheck = AuthTools.checkUser(accountNumber, passWord, userName);
-        Reply reply = Reply.constructReply(false, result);
+        // User authentication
+        String authCheck = BankingSystem.checkUser(accountNumber, passWord, userName);
+        if (authCheck != null) {
+            hasError = true;
+            result.add(authCheck);
+        } else {
+            // close account here
+        }
+        Reply reply = Reply.constructReply(hasError, result);
         return reply;
     }
 
