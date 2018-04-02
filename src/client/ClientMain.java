@@ -1,19 +1,20 @@
 package client;
 
-public class ClientMain {
-	public static void main(String[] args) {
-        int port = Integer.parseInt(args[0]);
-        int mode = Integer.parseInt(args[1]);
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
-        Client client = new Client(port, mode);
+public class ClientMain {
+	public static void main(String[] args) throws UnknownHostException {
+		InetAddress serverIp = InetAddress.getByName(args[0]);
+		int serverPort = Integer.parseInt(args[1]);
+
+        Client client = new Client(serverIp, serverPort);
         try {
             client.start();
         } catch (Exception e) {
             e.printStackTrace();
             return;
         }
-        while (true) {
-            client.process();
-        }
+        client.run();
     }
 }

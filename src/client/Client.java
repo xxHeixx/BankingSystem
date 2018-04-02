@@ -1,11 +1,10 @@
 package client;
 
 import java.net.SocketException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.net.DatagramPacket;
-import client.ReplyReceiver.Reply_Mode;
-
 import java.net.InetAddress;
 
 import shared.Constant;
@@ -30,22 +29,29 @@ public class Client {
     	System.out.println(replyType);
     }
     
+    public String op_SignUp(String name, String password, String currencyType){
+    	ArrayList<String> payloads = new ArrayList<>();
+    	payloads.add(name);
+    	payloads.add(password);
+    	payloads.add(currencyType);
+    	Request request = Request.createRequest(type, accountId, payLoads)
+    	return null;
+    }
+    
     public String run(){
         while (true) {
             DatagramPacket packet = socket.receivePacket();
             String error = socket.getErrMsg();
             if (error != null) {
-                /*if (error.equals(ClientSocket.TIMEOUT)) {
+                if (error.equals(socket.TIMEOUT)) {
                     System.out.println("Timeout receiving reply. Retransmit request...");
-                    clientSocket.sendRequest(request);
+                    //socket.sendRequest(request);
                     continue;
-                }*/
+                }
                 return error;
             }
             Request reply = Request.unmarshal(packet.getData());
             handleReply(reply);
-            }
         }
-        return null;
     }
 }
