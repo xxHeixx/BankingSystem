@@ -29,12 +29,8 @@ public class Client {
     	System.out.println(replyType);
     }
     
-    public String op_SignUp(String name, String password, String currencyType){
-    	ArrayList<String> payloads = new ArrayList<>();
-    	payloads.add(name);
-    	payloads.add(password);
-    	payloads.add(currencyType);
-    	Request request = Request.createRequest(type, accountId, payLoads)
+    public String sendRequest(String requestId, ArrayList<String> payloads){
+    	Request request = Request.createRequest(requestId, payloads.subList(1,payloads.size()));
     	return null;
     }
     
