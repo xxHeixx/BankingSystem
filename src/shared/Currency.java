@@ -27,6 +27,10 @@ public enum Currency {
     public String getAbbrv() {
         return this.id;
     }
+
+    public double getRate() {
+        return this.rate;
+    }
     public static Currency valueOf (int String) {
         return map.get(String);
     }
