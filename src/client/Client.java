@@ -12,10 +12,10 @@ import shared.SocketWrapper;
 public class Client {
 	private static final String SIGN_UP_MSG = "You have successfully created a new account: %s\n";
 	private static final String CLOSE_MSG = "Your account has been closed successfully\n";
-	private static final String BALANCE_MSG = "Your account's balance: %s\n";
-	private static final String DEPOSIT_MSG = "Your money has been deposited successfully. New balance: %s\n";
-	private static final String WITHDRAW_MSG = "Your money has been withdrew successfully. New balance: %s\n";
-	private static final String TRANSFER_MSG = "Your money has been transfered successfully. New balance: %s\n"; 
+	private static final String BALANCE_MSG = "Your account's balance: %s%s\n";
+	private static final String DEPOSIT_MSG = "Your money has been deposited successfully. New balance: %s%s\n";
+	private static final String WITHDRAW_MSG = "Your money has been withdrew successfully. New balance: %s%s\n";
+	private static final String TRANSFER_MSG = "Your money has been transfered successfully. New balance: %s%s\n"; 
 	
 	private InetAddress serverIp;
 	private int serverPort;
@@ -50,16 +50,16 @@ public class Client {
     			System.out.printf(CLOSE_MSG);
     			break;
     		case Request.BALANCE:
-    			System.out.printf(BALANCE_MSG, payloads.get(1));
+    			System.out.printf(BALANCE_MSG, payloads.get(1), payloads.get(2));
     			break;
     		case Request.DEPOSIT:
-    			System.out.printf(DEPOSIT_MSG, payloads.get(1));
+    			System.out.printf(DEPOSIT_MSG, payloads.get(1), payloads.get(2));
     			break;
     		case Request.WITHDRAW:
-    			System.out.printf(WITHDRAW_MSG, payloads.get(1));
+    			System.out.printf(WITHDRAW_MSG, payloads.get(1), payloads.get(2));
     			break;
     		case Request.TRANSFER:
-    			System.out.printf(TRANSFER_MSG, payloads.get(1));
+    			System.out.printf(TRANSFER_MSG, payloads.get(1), payloads.get(2));
     			break;
     		default:
     		}

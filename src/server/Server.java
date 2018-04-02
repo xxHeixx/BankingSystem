@@ -99,8 +99,9 @@ public class Server {
                 break;
 //            case Request.WITHDRAW:
 //                return processEditBookingRequest(request, requestKey);
-//            case Request.DEPOSIT:
-//                return processMonitorRequest(request, requestKey);
+            case Request.DEPOSIT:
+                reply = processDeposit(request, requestKey);
+                break;
 //            case Request.BALANCE:
 //                return processCancelBookingRequest(request, requestKey);
 //            case Request.TRANSFER:
@@ -150,6 +151,55 @@ public class Server {
         Reply reply = Reply.constructReply(hasError, result);
         return reply;
     }
+    
+    public Reply processCheckBalance(Request request, String requestKey) {
+        boolean hasError = false;
+        List<String>payLoads = request.getPayLoads();
+        String userName = payLoads.get(0);
+        Integer accountNumber = Integer.valueOf(payLoads.get(1));
+        String passWord = payLoads.get(2);
+        
+        List<String>result = new ArrayList<>();
+        result.add(request.getType());
+        // User authentication
+        String authCheck = BankingSystem.checkUser(accountNumber, passWord, userName);
+        if (authCheck != null) {
+            hasError = true;
+            result.add(authCheck);
+            Reply reply = Reply.constructReply(hasError, result);
+            return reply;
+        }
+    	Double balance = BankingSystem.getUser(accountNumber).getBalance();
+    	result.add(Double.toString(balance));
+    	result.add(BankingSystem.getUser(accountNumber).getCurrency().getAbbrv());
+    	Reply reply = Reply.constructReply(hasError, result);
+        return reply;
+    } 
+    
+    public Reply processDeposit(Request request, String requestKey) {
+        boolean hasError = false;
+        List<String>payLoads = request.getPayLoads();
+        String userName = payLoads.get(0);
+        Integer accountNumber = Integer.valueOf(payLoads.get(1));
+        String passWord = payLoads.get(2);
+        
+        List<String>result = new ArrayList<>();
+        result.add(request.getType());
+        // User authentication
+        String authCheck = BankingSystem.checkUser(accountNumber, passWord, userName);
+        if (authCheck != null) {
+            hasError = true;
+            result.add(authCheck);
+            Reply reply = Reply.constructReply(hasError, result);
+            return reply;
+        }
+    	Double balance = BankingSystem.deposit(payLoads);
+    	result.add(Double.toString(balance));
+    	result.add(BankingSystem.getUser(accountNumber).getCurrency().getAbbrv());
+    	Reply reply = Reply.constructReply(hasError, result);
+        return reply;
+    } 
+   
 
     public String sendReply(Reply reply, InetAddress clientHost, int clientPort) {
         byte[] data = Reply.marshal(reply);

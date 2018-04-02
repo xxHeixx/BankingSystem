@@ -38,11 +38,30 @@ public class BankingSystem {
 
     }
     
-    public static Integer checkBalance(List<String> payLoads) {
-    	Integer accountId = Integer.valueOf(payLoads.get(0));
-        String password = payLoads.get(1);
-        
-        return accountId;
+    public static AccountInfo getUser(int accountNum){
+    	return index.get(accountNum);
     }
+    
+    public static Double deposit(List<String> payLoads) {
+    	Integer accountId = Integer.valueOf(payLoads.get(1));
+    	Currency currency = Currency.valueFromString(payLoads.get(3));
+        Double amount = Double.valueOf(payLoads.get(4));
+        addMoney(accountId, currency, amount);
+        AccountInfo user = index.get(accountId);
+        return user.getBalance();
+    }
+    
+    public static int addMoney(int accountId, Currency newCurrency, Double amount){
+    	AccountInfo user = index.get(accountId);
+    	Double newAmount = amount*newCurrency.getRate()/user.getCurrency().getRate();
+    	if (newAmount+user.getBalance()>=0){
+    		user.setBalance(newAmount+user.getBalance());
+    		index.put(accountId, user);
+    	} else {
+    		return -1;
+    	}
+    	return 0;
+    }
+
 
 }
