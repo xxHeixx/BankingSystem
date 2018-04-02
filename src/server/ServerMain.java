@@ -13,7 +13,7 @@ public class ServerMain {
             return;
         }
         while (true) {
-            server.process();
+            server.processRequest();
         }
     }
 }
