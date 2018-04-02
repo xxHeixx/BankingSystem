@@ -17,7 +17,6 @@ public class AuthTools {
     public static void addUser ( Integer accountNumber, String password, String userName){
         try {
             String encryptedPassword = encrypt(password);
-            System.out.println(encryptedPassword);
             Pair<String, String> entryInfo = new Pair<>(encryptedPassword, userName);
             passwordMap.put(accountNumber, entryInfo);
         } catch (Exception e) {
@@ -28,7 +27,6 @@ public class AuthTools {
     public static String checkUser (Integer accountNumber, String password, String userName){
         try {
             String encryptedPassword = encrypt(password);
-            System.out.println("---" + encryptedPassword);
             if (!passwordMap.containsKey(accountNumber)) {
                 return INVALID_ACC;
             }
