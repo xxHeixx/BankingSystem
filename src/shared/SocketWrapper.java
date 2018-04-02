@@ -43,4 +43,8 @@ public class SocketWrapper {
             errMsg = e.getMessage();
         }
     }
+
+    public String getIp() {
+        return this.socket.getLocalAddress().getHostAddress();
+    }
 }
