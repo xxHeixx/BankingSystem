@@ -1,9 +1,6 @@
 package server;
 
-import shared.MaxSizeHashMap;
-import shared.Reply;
-import shared.Request;
-import shared.SocketWrapper;
+import shared.*;
 
 import java.net.DatagramPacket;
 import java.net.InetAddress;
@@ -125,7 +122,12 @@ public class Server {
     public Reply processSignupRequest(Request request, String requestKey) {
         List<String>result = new ArrayList<>();
         result.add(request.getType());
-        Integer accountId = BankingSystem.createUser(request.getPayLoads());
+        List<String>payLoads = request.getPayLoads();
+        String userName = payLoads.get(0);
+        String password = payLoads.get(1);
+        Currency currency = Currency.valueFromString(payLoads.get(2));
+        Double balance = Double.valueOf(payLoads.get(3));
+        Integer accountId = BankingSystem.createUser(userName, password, currency, balance);
         result.add(accountId.toString());
         Reply reply = Reply.constructReply(false, result);
         return reply;
@@ -146,6 +148,8 @@ public class Server {
             result.add(authCheck);
         } else {
             // close account here
+            String msg = BankingSystem.deleteUser(userName, passWord, accountNumber);
+            result.add(msg);
         }
         Reply reply = Reply.constructReply(hasError, result);
         return reply;

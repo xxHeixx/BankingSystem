@@ -18,11 +18,8 @@ public class BankingSystem {
         }
     }
 
-    public static Integer createUser(List<String> payLoads) {
-        String userName = payLoads.get(0);
-        String password = payLoads.get(1);
-        Currency currency = Currency.valueFromString(payLoads.get(2));
-        Double balance = Double.valueOf(payLoads.get(3));
+    public static Integer createUser(String userName, String password, Currency currency, Double balance) {
+
         AccountInfo userInfo = AccountInfo.createNewAccount(userName, currency, balance);
         Integer accountId = userInfo.getAccountId();
         index.put(accountId, userInfo);
@@ -30,11 +27,17 @@ public class BankingSystem {
         return accountId;
     }
 
-    public static boolean deleteUser(List<String> payLoads) {
-        String userName = payLoads.get(0);
-        Integer accountId = Integer.valueOf(payLoads.get(1));
-        String password = payLoads.get(2);
-        return true;
+    public static String deleteUser(String userName, String password, Integer accountId) {
+        String msg;
+        try {
+            index.remove(accountId);
+            AuthTools.deleteUser(accountId);
+            msg = "Account number " + accountId.toString() + " is deleted";
+        } catch (Exception e) {
+            e.printStackTrace();
+            msg = "Error while trying to delete the account";
+        }
+        return msg;
 
     }
     
