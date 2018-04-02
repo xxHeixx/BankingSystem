@@ -26,7 +26,8 @@ public class Client {
     }
     
     public void handleReply(Request reply){
-    	String id = reply.getType();
+    	String replyType = reply.getType();
+    	System.out.println(replyType);
     }
     
     public String run(){
@@ -42,30 +43,7 @@ public class Client {
                 return error;
             }
             Request reply = Request.unmarshal(packet.getData());
-            if (reply.statusCode == Reply.ERROR_REPLY_CODE) {
-                return reply.getErrorMessage();
-
-            } else {
-                callback.handle(reply.getPayloads());
-                if (replyReceiveMode == Reply_Mode.NORMAL) {
-                    break;
-                } else {
-                    while (true) {
-                        data = clientSocket.receiveReply();
-                        error = clientSocket.error();
-                        if (error != null) {
-                            if (!error.equals(ClientSocket.TIMEOUT)) {
-                                return error;
-                            }
-                            continue;
-                        }
-                        reply = Reply.unmarshal(data);
-                        callback.handle(reply.getPayloads());
-                        if (reply.getPayloads().get(1).equals(Constant.STOP_MONITOR)) {
-                            break;
-                        }
-                    }
-                }
+            handleReply(reply);
             }
         }
         return null;
