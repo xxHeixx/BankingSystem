@@ -22,7 +22,7 @@ public class SocketWrapper {
         return this.errMsg;
     }
 
-    public DatagramPacket sendPacket() {
+    public DatagramPacket receivePacket() {
         this.errMsg = null;
         byte[] data = new byte[MAX_PACKET_SIZE];
         DatagramPacket packet = new DatagramPacket(data, data.length);
