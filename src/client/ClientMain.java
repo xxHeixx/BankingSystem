@@ -60,15 +60,13 @@ public class ClientMain {
                 case Request.DEPOSIT:
                 case Request.WITHDRAW:
                 case Request.TRANSFER:
+                case Request.MONITOR:
                 	ArrayList<String> data = new ArrayList<>(Arrays.asList(params));
                 	error = client.sendRequest(params[0],data);
                     if (error != null) {
                         System.out.printf(ERRTEXT_SERVER, error);
                     }
                     break;
-                case Request.MONITOR:
-                	
-                	break;
                 case Request.QUIT:
                 	clientOpen = false;
                 	client.exit();

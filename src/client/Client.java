@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 
+import shared.Constant;
 import shared.Reply;
 import shared.Request;
 import shared.SocketWrapper;
@@ -16,6 +17,13 @@ public class Client {
 	private static final String DEPOSIT_MSG = "Your money has been deposited successfully. New balance: %.2f %s\n";
 	private static final String WITHDRAW_MSG = "Your money has been withdrew successfully. New balance: %.2f %s\n";
 	private static final String TRANSFER_MSG = "Your money has been transfered successfully. New balance: %.2f %s\n"; 
+	
+	private static final String MONITOR_SIGN_UP_MSG = "User %s have created new account %s with initial balance of %s %s\n";
+	private static final String MONITOR_CLOSE_MSG = "User %s have closed account %s\n";
+	private static final String MONITOR_DEPOSIT_MSG = "%s %s has been deposited into account %s. New balance: %s %s\n";
+	private static final String MONITOR_WITHDRAW_MSG = "%s %s has been withdrew from account %s. New balance: %s %s\n";
+	private static final String MONITOR_TRANSFER_MSG = "%s %s has been transferred from account %s to account %s\n";
+
 	
 	private InetAddress serverIp;
 	private int serverPort;
@@ -40,9 +48,9 @@ public class Client {
     	int replyStatus = reply.getStatusCode();
     	String replyErrMsg = reply.getErrMsg();
     	ArrayList<String> payloads = reply.getPayLoads();
-		/*for(int i=0;i<payloads.size();i++){
+		for(int i=0;i<payloads.size();i++){
 			System.out.println(payloads.get(i));
-		}*/
+		}
     	if (replyStatus == Reply.ERROR_REPLY_CODE){
     		System.out.printf("Error: %s\n", replyErrMsg);
     	} else{
@@ -71,6 +79,12 @@ public class Client {
     			balance = Double.valueOf(payloads.get(1));
     			System.out.printf(TRANSFER_MSG, balance, payloads.get(2));
     			break;
+    		case Request.MONITOR:
+    			if (payloads.get(1).equals(Constant.START_MONITOR)){
+    				System.out.println("lol");
+    				monitorLoop();
+    				
+    			}
     		default:
     		}
     	}
@@ -99,6 +113,72 @@ public class Client {
             handleReply(reply);
             break;
         }
+    	return null;
+    }
+
+    public String monitorLoop(){
+    	while (true) {
+            DatagramPacket replyPacket = socket.receivePacket();
+            String error = socket.getErrMsg();
+            if (error != null) {
+            	System.out.println(error);
+                return error;
+            }
+            Reply reply = Reply.unmarshal(replyPacket.getData());
+            error = handleMonitorReply(reply);
+            if (error == Constant.STOP_MONITOR){
+            	break;
+            } else if (error!=null){
+            	System.out.println(error);
+            	return error;
+            }
+        }
+    	return null;
+    }
+    
+    public String handleMonitorReply(Reply reply){
+    	int replyStatus = reply.getStatusCode();
+    	String replyErrMsg = reply.getErrMsg();
+    	ArrayList<String> payloads = reply.getPayLoads();
+		for(int i=0;i<payloads.size();i++){
+			System.out.println(payloads.get(i));
+		}
+    	if (replyStatus == Reply.ERROR_REPLY_CODE){
+    		System.out.printf("Error: %s\n", replyErrMsg);
+    	} else{
+    		String requestId = payloads.get(0);
+    		Double balance, amount;
+    		switch(requestId){
+    		case Request.SIGN_UP:
+    			System.out.printf(MONITOR_SIGN_UP_MSG, payloads.get(1),payloads.get(2),payloads.get(3),payloads.get(4));
+    			break;
+    		case Request.CLOSE:
+    			System.out.printf(MONITOR_CLOSE_MSG, payloads.get(1),payloads.get(2));
+    			break;
+    		case Request.DEPOSIT:
+    			amount = Double.valueOf(payloads.get(2));
+    			balance = Double.valueOf(payloads.get(4));
+    			System.out.printf(MONITOR_DEPOSIT_MSG, amount, payloads.get(3), payloads.get(1),balance,payloads.get(5));
+    			break;
+    		case Request.WITHDRAW:
+    			amount = Double.valueOf(payloads.get(2));
+    			balance = Double.valueOf(payloads.get(4));
+    			System.out.printf(MONITOR_WITHDRAW_MSG, amount, payloads.get(3), payloads.get(1),balance,payloads.get(5));
+    			break;
+    		case Request.TRANSFER:
+    			amount = Double.valueOf(payloads.get(4));
+    			System.out.printf(MONITOR_TRANSFER_MSG, amount, payloads.get(3),payloads.get(1),payloads.get(2));
+    			break;
+    		case Request.MONITOR:
+    			if (payloads.size()>1){
+    			return payloads.get(1);
+    			}
+    			break;
+    			
+    		default:
+    			return "No matching operation";
+    		}
+    	}
     	return null;
     }
 }
