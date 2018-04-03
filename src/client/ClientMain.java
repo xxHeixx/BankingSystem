@@ -18,8 +18,12 @@ public class ClientMain {
 		+ "Check balance: b,<name>,<account_number>,<password>\n"
 		+ "Deposit money: d,<name>,<account_number>,<password>,<currency>,<amount>\n"
 		+ "Withdraw money: w,<name>,<account_number>,<password>,<currency>,<amount>\n"
-		+ "Transfer money: t,<name>,<account_number>,<password>,<received_account_number>,<currency>,<amount>\n";
+		+ "Transfer money: t,<name>,<account_number>,<password>,<received_account_number>,<currency>,<amount>\n"
+		+ "Monitor accounts: m,<period_in_seconds>\n"
+		+ "Quit client: q\n";
 	private static final String HELPCODE = "h";
+	private static final String ERRTEXT_INPUT = "Input Error: %s\n";
+	private static final String ERRTEXT_SERVER = "Server Error: %s\n";
 	
 	public static void main(String[] args) throws IOException {
         int clientPort = Integer.parseInt(args[0]);
@@ -35,8 +39,9 @@ public class ClientMain {
         }
         String[] params;
         String error;
+        boolean clientOpen = true;
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        while (true) {
+        while (clientOpen) {
             System.out.print(INSTRUCTION);
             params = br.readLine().split(",");
             if (params[0].equals(HELPCODE)) {
@@ -45,7 +50,7 @@ public class ClientMain {
             } else {
             	error = InputChecking.checkSyntax(params);
             	if (error!=InputChecking.CORRECT){
-            		System.out.printf("Input Error: %s\n", error);
+            		System.out.printf(ERRTEXT_INPUT, error);
             		continue;
             	}
             	switch (params[0]) {
@@ -58,11 +63,18 @@ public class ClientMain {
                 	ArrayList<String> data = new ArrayList<>(Arrays.asList(params));
                 	error = client.sendRequest(params[0],data);
                     if (error != null) {
-                        System.out.printf("Client Error with operation %s: %s\n",params[0], error);
+                        System.out.printf(ERRTEXT_SERVER, error);
                     }
                     break;
+                case Request.MONITOR:
+                	
+                	break;
+                case Request.QUIT:
+                	clientOpen = false;
+                	client.exit();
+                	break;
                 default:
-                    System.out.println("Invalid operation, please input again (input h for help)\n");
+                    System.out.printf(ERRTEXT_INPUT, "Code should not run to this part!");
                     continue;
                 }
                 

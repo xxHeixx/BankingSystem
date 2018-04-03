@@ -6,6 +6,7 @@ import shared.Request;
 public class InputChecking {
 	public static final String CORRECT = "Correct syntax";
 	public static final String ERR_ACCID = "Account number must be an integer";
+	public static final String ERR_PERIOD = "Time period must be an integer";
 	public static final String ERR_AMOUNT = "Amount of money must be a double";
 	public static final String ERR_PASSWORD = "Password must have exactly 4 characters";
 	public static final String ERR_CURRENCY = "Currency must be SGD, USD, EUR or GBP";
@@ -66,6 +67,14 @@ public class InputChecking {
         	if (error!=InputChecking.CORRECT){return error;}
             break;
             
+        case Request.MONITOR:
+        	if (params.length>2){return ERR_PARAM_REDUNDANT;}
+        	else if (params.length<2){return ERR_PARAM_LACK;}
+        	error = InputChecking.checkPeriod(params[1]);
+        	if (error!=InputChecking.CORRECT){return error;}
+        	break;
+        case Request.QUIT:
+        	break;
         default:
         	return ERR_OPERATION;
 		}
@@ -79,6 +88,17 @@ public class InputChecking {
 	        return ERR_ACCID; 
 	    } catch(NullPointerException e) {
 	        return ERR_ACCID;
+	    }
+	    return CORRECT;
+	}
+	
+	public static String checkPeriod(String period){
+		try { 
+	        Integer.parseInt(period); 
+	    } catch(NumberFormatException e) { 
+	        return ERR_PERIOD; 
+	    } catch(NullPointerException e) {
+	        return ERR_PERIOD;
 	    }
 	    return CORRECT;
 	}

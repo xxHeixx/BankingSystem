@@ -28,7 +28,12 @@ public class Client {
 		this.clientPort = clientPort;
     }
     public void start() throws SocketException {
+    	System.out.println("Starting client...");
         socket = new SocketWrapper(clientPort);
+    }
+    public void exit() throws SocketException {
+    	System.out.println("Exiting client...");
+    	socket.close();
     }
     
     public void handleReply(Reply reply){
