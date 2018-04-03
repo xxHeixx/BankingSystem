@@ -16,6 +16,8 @@ public class Server {
     private InvocationSemantics mode;
     private SocketWrapper socket;
     private MaxSizeHashMap<String, Reply> replyRecord;
+    private static final int lossFreq = 5;
+    private static int counter = 0;
 
     private enum InvocationSemantics {
         AT_MOST_ONCE (0), AT_LEAST_ONCE (1);
@@ -56,6 +58,12 @@ public class Server {
      * @return
      */
     public String processRequest() {
+        // Simulate request loss
+        counter ++;
+        if (counter % lossFreq == 0) {
+            return null;
+        }
+
         String error = null;
         DatagramPacket packet = socket.receivePacket();
 
@@ -87,6 +95,7 @@ public class Server {
      * @return
      */
     private String handleRequest(Request request, String requestKey, InetAddress clientAddress, int clientPort) {
+        LoggingTools.logRequest(request, clientAddress, clientPort);
         Reply reply = null;
         switch (request.getType()) {
             case Request.SIGN_UP:
@@ -114,6 +123,7 @@ public class Server {
                 return "Invalid_operation";
         }
         String error = sendReply(reply, clientAddress, clientPort);
+        LoggingTools.logReply(reply);
         if(error == null && reply.getStatusCode() == Reply.SUCCESS_REPLY_CODE && request.getType()!= Request.MONITOR
                 && request.getType()!= Request.BALANCE) {
             MonitoringTools.updateClients(request, reply, socket);
@@ -309,6 +319,12 @@ public class Server {
     }
 
     public String sendReply(Reply reply, InetAddress clientHost, int clientPort) {
+        // Simulate reply loss
+        counter ++;
+        if (counter % lossFreq == 0) {
+            return null;
+        }
+
         byte[] data = Reply.marshal(reply);
         DatagramPacket packet = new DatagramPacket(data, data.length, clientHost, clientPort);
         socket.sendPacket(packet);

@@ -1,6 +1,8 @@
 package shared;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 
@@ -15,7 +17,6 @@ public class Request {
     public static final String TRANSFER = "t";
     public static final String MONITOR = "m";
     private static int counter = 0;
-
     private String type;
     private String id;
     private List<String> payLoads = new ArrayList<>();
@@ -33,7 +34,10 @@ public class Request {
     }
 
     public static Request createRequest(String type, List<String>payLoads) {
-        return new Request(String.valueOf(counter++), type, payLoads );
+        counter++;
+        String date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+        String requestId = date + String.valueOf(counter);
+        return new Request(String.valueOf(requestId), type, payLoads );
     }
 
     private Request(String id, String type, List<String>payLoads) {

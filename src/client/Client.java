@@ -48,9 +48,11 @@ public class Client {
     	int replyStatus = reply.getStatusCode();
     	String replyErrMsg = reply.getErrMsg();
     	ArrayList<String> payloads = reply.getPayLoads();
-		/*for(int i=0;i<payloads.size();i++){
-			System.out.println(payloads.get(i));
-		}*/
+    	if(Constant.DEBUG) {
+			for (int i = 0; i < payloads.size(); i++) {
+				System.out.println(payloads.get(i));
+			}
+		}
     	if (replyStatus == Reply.ERROR_REPLY_CODE){
     		System.out.printf("Error: %s\n", replyErrMsg);
     	} else{
