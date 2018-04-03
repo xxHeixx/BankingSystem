@@ -171,8 +171,8 @@ public class Client {
     			System.out.printf(MONITOR_WITHDRAW_MSG, amount, payloads.get(3), payloads.get(1),balance,payloads.get(5));
     			break;
     		case Request.TRANSFER:
-    			amount = Double.valueOf(payloads.get(4));
-    			System.out.printf(MONITOR_TRANSFER_MSG, amount, payloads.get(3),payloads.get(1),payloads.get(2));
+    			amount = Double.valueOf(payloads.get(3));
+    			System.out.printf(MONITOR_TRANSFER_MSG, amount, payloads.get(4),payloads.get(1),payloads.get(2));
     			break;
     		case Request.MONITOR:
     			if (payloads.size()>1){
@@ -187,4 +187,4 @@ public class Client {
     	return null;
     }
 }
-    
+   
