@@ -18,11 +18,11 @@ public class Client {
 	private static final String WITHDRAW_MSG = "Your money has been withdrew successfully. New balance: %.2f %s\n";
 	private static final String TRANSFER_MSG = "Your money has been transfered successfully. New balance: %.2f %s\n"; 
 	
-	private static final String MONITOR_SIGN_UP_MSG = "User %s have created new account %s with initial balance of %s %s\n";
+	private static final String MONITOR_SIGN_UP_MSG = "User %s have created new account %s with initial balance of %.2f %s\n";
 	private static final String MONITOR_CLOSE_MSG = "User %s have closed account %s\n";
-	private static final String MONITOR_DEPOSIT_MSG = "%s %s has been deposited into account %s. New balance: %s %s\n";
-	private static final String MONITOR_WITHDRAW_MSG = "%s %s has been withdrew from account %s. New balance: %s %s\n";
-	private static final String MONITOR_TRANSFER_MSG = "%s %s has been transferred from account %s to account %s\n";
+	private static final String MONITOR_DEPOSIT_MSG = "%.2f %s has been deposited into account %s. New balance: %.2f %s\n";
+	private static final String MONITOR_WITHDRAW_MSG = "%.2f %s has been withdrew from account %s. New balance: %.2f %s\n";
+	private static final String MONITOR_TRANSFER_MSG = "%.2f %s has been transferred from account %s to account %s\n";
 
 	
 	private InetAddress serverIp;
@@ -48,9 +48,9 @@ public class Client {
     	int replyStatus = reply.getStatusCode();
     	String replyErrMsg = reply.getErrMsg();
     	ArrayList<String> payloads = reply.getPayLoads();
-		for(int i=0;i<payloads.size();i++){
+		/*for(int i=0;i<payloads.size();i++){
 			System.out.println(payloads.get(i));
-		}
+		}*/
     	if (replyStatus == Reply.ERROR_REPLY_CODE){
     		System.out.printf("Error: %s\n", replyErrMsg);
     	} else{
@@ -81,7 +81,7 @@ public class Client {
     			break;
     		case Request.MONITOR:
     			if (payloads.get(1).equals(Constant.START_MONITOR)){
-    				System.out.println("lol");
+    				System.out.println("Start Monitoring ...");
     				monitorLoop();
     				
     			}
@@ -130,13 +130,14 @@ public class Client {
            
             Reply reply = Reply.unmarshal(replyPacket.getData());
             error = handleMonitorReply(reply);
-            if (error == Constant.STOP_MONITOR){
+            if (error!=null && error.equals(Constant.STOP_MONITOR)){
             	break;
             } else if (error!=null){
             	System.out.printf("MonitorError: %s\n",error);
             	return error;
             }
         }
+    	System.out.printf("End Monitoring\n");
     	return null;
     }
     
@@ -177,7 +178,7 @@ public class Client {
     		case Request.MONITOR:
     			if (payloads.size()>1){
     			return payloads.get(1);
-    			}
+    			} 
     			break;
     			
     		default:
