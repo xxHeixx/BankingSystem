@@ -1,7 +1,6 @@
 package server;
 
 import shared.Currency;
-import shared.ErrorCode;
 
 import java.util.HashMap;
 import java.util.Map;

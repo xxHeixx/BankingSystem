@@ -13,6 +13,7 @@ public class Request {
     public static final String DEPOSIT = "d";
     public static final String BALANCE = "b";
     public static final String TRANSFER = "t";
+    public static final String MONITOR = "m";
     private static int counter = 0;
 
     private String type;

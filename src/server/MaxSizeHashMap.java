@@ -1,4 +1,4 @@
-package shared;
+package server;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
