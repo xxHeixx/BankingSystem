@@ -119,17 +119,21 @@ public class Client {
     public String monitorLoop(){
     	while (true) {
             DatagramPacket replyPacket = socket.receivePacket();
-            String error = socket.getErrMsg();
-            if (error != null) {
-            	System.out.println(error);
-                return error;
+            if(replyPacket == null){
+            	continue;
             }
+            String error = socket.getErrMsg();
+            if (error != null && error!= SocketWrapper.TIMEOUT) {
+            	System.out.printf("MonitorError: %s\n",error);
+                return error;
+            } 
+           
             Reply reply = Reply.unmarshal(replyPacket.getData());
             error = handleMonitorReply(reply);
             if (error == Constant.STOP_MONITOR){
             	break;
             } else if (error!=null){
-            	System.out.println(error);
+            	System.out.printf("MonitorError: %s\n",error);
             	return error;
             }
         }
@@ -140,9 +144,9 @@ public class Client {
     	int replyStatus = reply.getStatusCode();
     	String replyErrMsg = reply.getErrMsg();
     	ArrayList<String> payloads = reply.getPayLoads();
-		for(int i=0;i<payloads.size();i++){
+		/*for(int i=0;i<payloads.size();i++){
 			System.out.println(payloads.get(i));
-		}
+		}*/
     	if (replyStatus == Reply.ERROR_REPLY_CODE){
     		System.out.printf("Error: %s\n", replyErrMsg);
     	} else{
@@ -150,7 +154,8 @@ public class Client {
     		Double balance, amount;
     		switch(requestId){
     		case Request.SIGN_UP:
-    			System.out.printf(MONITOR_SIGN_UP_MSG, payloads.get(1),payloads.get(2),payloads.get(3),payloads.get(4));
+    			amount = Double.valueOf(payloads.get(3));
+    			System.out.printf(MONITOR_SIGN_UP_MSG, payloads.get(1),payloads.get(2),amount,payloads.get(4));
     			break;
     		case Request.CLOSE:
     			System.out.printf(MONITOR_CLOSE_MSG, payloads.get(1),payloads.get(2));
