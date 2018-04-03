@@ -95,12 +95,12 @@ public class Server {
                 reply =  processCloseRequest(request);
                 break;
 //            case Request.WITHDRAW:
-//                return processEditBookingRequest(request, requestKey);
+//                return processEditBookingRequest(request);
             case Request.DEPOSIT:
                 reply = processDeposit(request);
                 break;
 //            case Request.BALANCE:
-//                return processCancelBookingRequest(request, requestKey);
+//                return processCancelBookingRequest(request);
             case Request.TRANSFER:
                 reply =  processTransferRequest(request);
                 break;
@@ -181,7 +181,7 @@ public class Server {
         return reply;
     } 
     
-    public Reply processDeposit(Request request, String requestKey) {
+    public Reply processDeposit(Request request) {
         boolean hasError = false;
         List<String>payLoads = request.getPayLoads();
         String userName = payLoads.get(0);
