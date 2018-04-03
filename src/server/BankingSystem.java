@@ -1,8 +1,9 @@
 package server;
 
 import shared.Currency;
+import shared.ErrorCode;
+
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class BankingSystem {
@@ -10,12 +11,11 @@ public class BankingSystem {
     private static Map<Integer, AccountInfo> index = new HashMap<Integer, AccountInfo>();
 
     public static String checkUser(Integer accountNumber, String password, String userName) {
-        String authResult = AuthTools.checkUser(accountNumber, password, userName);
-        if (authResult != AuthTools.CORRECT) {
-            return authResult;
-        } else {
+        ErrorCode errorCode = AuthTools.checkUser(accountNumber, password, userName);
+        if (errorCode == null) {
             return null;
         }
+        return errorCode.getMsg();
     }
 
     public static Integer createUser(String userName, String password, Currency currency, Double balance) {
@@ -27,14 +27,13 @@ public class BankingSystem {
     }
 
     public static String deleteUser(Integer accountId) {
-        String msg;
+        String msg = null;
         try {
             index.remove(accountId);
             AuthTools.deleteUser(accountId);
-            msg = "Account number " + accountId.toString() + " is deleted";
         } catch (Exception e) {
             e.printStackTrace();
-            msg = "Error while trying to delete the account";
+            msg = ErrorCode.ERROR_DELETE_ACCOUNT.getMsg();
         }
         return msg;
 
@@ -48,6 +47,26 @@ public class BankingSystem {
         addMoney(accountId, currency, amount);
         AccountInfo user = index.get(accountId);
         return user.getBalance();
+    }
+
+    public static String withdraw(Integer accountId, Currency currency, Double amount) {
+        Integer withdrawResult = addMoney(accountId, currency, amount * -1);
+        if (withdrawResult < 0) {
+            return ErrorCode.INSUFFICIENT_BALANCE.getMsg();
+        }
+        return null;
+    }
+
+    public static String transferMoney(int senderAccountId, int receiverAccountId, double amount, Currency currency) {
+        if (!index.containsKey(receiverAccountId)) {
+            return ErrorCode.INVALID_RECEIVER_ID.getMsg();
+        }
+        Integer minusBalanceResult = addMoney(senderAccountId, currency, amount * -1);
+        if (minusBalanceResult < 0) {
+            return ErrorCode.INSUFFICIENT_BALANCE.getMsg();
+        }
+        addMoney(receiverAccountId, currency, amount);
+        return null;
     }
     
     public static int addMoney(int accountId, Currency newCurrency, Double amount){

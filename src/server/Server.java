@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@SuppressWarnings("Duplicates")
 public class Server {
     private int port;
     private InvocationSemantics mode;
@@ -94,13 +95,15 @@ public class Server {
             case Request.CLOSE:
                 reply =  processCloseRequest(request);
                 break;
-//            case Request.WITHDRAW:
-//                return processEditBookingRequest(request);
+            case Request.WITHDRAW:
+                reply =  processWithdraw(request);
+                break;
             case Request.DEPOSIT:
                 reply = processDeposit(request);
                 break;
-//            case Request.BALANCE:
-//                return processCancelBookingRequest(request);
+            case Request.BALANCE:
+                reply = processCheckBalance(request);
+                break;
             case Request.TRANSFER:
                 reply =  processTransferRequest(request);
                 break;
@@ -148,11 +151,17 @@ public class Server {
         if (authCheck != null) {
             hasError = true;
             result.add(authCheck);
-        } else {
-            // close account here
-            String msg = BankingSystem.deleteUser(accountNumber);
-            result.add(msg);
+            Reply reply = Reply.constructReply(hasError, result);
+            return reply;
         }
+        // close account here
+        String msg = BankingSystem.deleteUser(accountNumber);
+        if (msg != null) {
+            hasError = true;
+        } else {
+            msg = "Successfully close account number " + accountNumber.toString();
+        }
+        result.add(msg);
         Reply reply = Reply.constructReply(hasError, result);
         return reply;
     }
@@ -201,14 +210,80 @@ public class Server {
         }
     	Double balance = BankingSystem.deposit(accountNumber, currency, amount);
     	result.add(Double.toString(balance));
-    	result.add(currency.getAbbrv());
+    	result.add(BankingSystem.getUser(accountNumber).getCurrency().getAbbrv());
     	Reply reply = Reply.constructReply(hasError, result);
         return reply;
-    } 
+    }
+
+    public Reply processWithdraw(Request request) {
+        boolean hasError = false;
+        List<String>result = new ArrayList<>();
+        result.add(request.getType());
+        // Extract payloads
+        List<String>payLoads = request.getPayLoads();
+        String userName = payLoads.get(0);
+        Integer accountNumber = Integer.valueOf(payLoads.get(1));
+        String passWord = payLoads.get(2);
+        Currency currency = Currency.valueFromString(payLoads.get(3));
+        Double amount = Double.valueOf(payLoads.get(4));
+
+        // User authentication
+        String authCheck = BankingSystem.checkUser(accountNumber, passWord, userName);
+        if (authCheck != null) {
+            hasError = true;
+            result.add(authCheck);
+            Reply reply = Reply.constructReply(hasError, result);
+            return reply;
+        }
+        // Withdraw money
+        String msg = BankingSystem.withdraw(accountNumber, currency, amount);
+        if (msg != null) {
+            hasError = true;
+            result.add(msg);
+        } else {
+            Double balance = BankingSystem.getUser(accountNumber).getBalance();
+            result.add(Double.toString(balance));
+            result.add(BankingSystem.getUser(accountNumber).getCurrency().getAbbrv());
+        }
+        Reply reply = Reply.constructReply(hasError, result);
+        return reply;
+    }
    
 
     public Reply processTransferRequest(Request request) {
+        boolean hasError = false;
+        List<String>result = new ArrayList<>();
+        result.add(request.getType());
+        // Extract payloads
+        List<String>payLoads = request.getPayLoads();
+        String senderName = payLoads.get(0);
+        Integer senderAccountId = Integer.valueOf(payLoads.get(1));
+        String senderPassword = payLoads.get(2);
+        Integer receiverAccountId = Integer.valueOf(payLoads.get(3));
+        Currency currency = Currency.valueFromString(payLoads.get(4));
+        Double amount = Double.valueOf(payLoads.get(5));
 
+        // User authentication
+        String authCheck = BankingSystem.checkUser(senderAccountId, senderPassword, senderName);
+        if (authCheck != null) {
+            hasError = true;
+            result.add(authCheck);
+            Reply reply = Reply.constructReply(hasError, result);
+            return reply;
+        }
+
+        // Transfer money here
+        String msg = BankingSystem.transferMoney(senderAccountId, receiverAccountId, amount, currency);
+        if (msg != null) {
+            hasError = true;
+            result.add(msg);
+        } else {
+            Double balance = BankingSystem.getUser(senderAccountId).getBalance();
+            result.add(Double.toString(balance));
+            result.add(BankingSystem.getUser(senderAccountId).getCurrency().getAbbrv());
+        }
+        Reply reply = Reply.constructReply(hasError, result);
+        return reply;
     }
 
     public String sendReply(Reply reply, InetAddress clientHost, int clientPort) {
