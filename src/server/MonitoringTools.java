@@ -53,12 +53,12 @@ public class MonitoringTools {
         List<String>resultPayloads = reply.getPayLoads();
         List<String>requestPayloads = request.getPayLoads();
         switch (request.getType()) {
-            // Add username, accountId, Currency, Balance
+            // Add username, accountId, Balance, Currency
             case Request.SIGN_UP:
                 result.add(requestPayloads.get(0));
                 result.add(resultPayloads.get(1));
-                result.add(requestPayloads.get(2));
                 result.add(requestPayloads.get(3));
+                result.add(requestPayloads.get(2));
                 break;
             // Add username, accountId
             case Request.CLOSE:
@@ -81,12 +81,12 @@ public class MonitoringTools {
                 result.add(resultPayloads.get(1));
                 result.add(resultPayloads.get(2));
                 break;
-            // Add senderId, receiverId, Currency transferred, Amount
+            // Add senderId, receiverId, Amount, Currency transferred
             case Request.TRANSFER:
                 result.add(requestPayloads.get(1));
                 result.add(requestPayloads.get(3));
-                result.add(requestPayloads.get(4));
                 result.add(requestPayloads.get(5));
+                result.add(requestPayloads.get(4));
                 break;
             default:
                 break;
