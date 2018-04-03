@@ -9,7 +9,6 @@ public class AccountInfo {
     private String userName;
     private Currency currency;
     private double balance;
-    private boolean inSession;
 
     public static  AccountInfo createNewAccount(String userName, Currency currency, double balance) {
         counter ++;
@@ -21,7 +20,6 @@ public class AccountInfo {
         this.userName = userName;
         this.currency = currency;
         this.balance = balance;
-        this.inSession = true;
     }
 
     public int getAccountId() {
@@ -54,14 +52,6 @@ public class AccountInfo {
 
     public void setBalance(double balance) {
         this.balance = balance;
-    }
-
-    public boolean isInSession() {
-        return inSession;
-    }
-
-    public void setInSession(boolean inSession) {
-        this.inSession = inSession;
     }
 
 }

@@ -7,7 +7,7 @@ public enum Currency {
     SGD ("SGD", 1.00),
     USD ("USD", 1.31),
     EUR ("EUR", 1.61),
-    BGP ("GBP", 1.84);
+    GBP ("GBP", 1.84);
 
     private final String abbrv;
     private final double rate;
@@ -34,5 +34,9 @@ public enum Currency {
 
     public static Currency valueFromString (String abbrv) {
         return map.get(abbrv);
+    }
+
+    public static boolean isValid(String abbrv) {
+        return map.containsKey(abbrv);
     }
 }
