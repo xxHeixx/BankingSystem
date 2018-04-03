@@ -36,7 +36,7 @@ public enum Currency {
         return map.get(abbrv);
     }
 
-    public boolean isValid(String abbrv) {
+    public static boolean isValid(String abbrv) {
         return map.containsKey(abbrv);
     }
 }
