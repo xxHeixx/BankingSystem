@@ -315,6 +315,11 @@ public class Server {
         MonitoringTools.registerClient(client, socket, duration);
         result.add(Constant.START_MONITOR);
         Reply reply = Reply.constructReply(false, result);
+        if(true) {
+            for (int i = 0; i < payLoads.size(); i++) {
+                System.out.println("++" + payLoads.get(i));
+            }
+        }
         return reply;
     }
 
