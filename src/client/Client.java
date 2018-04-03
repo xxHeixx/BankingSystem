@@ -45,9 +45,13 @@ public class Client {
     }
     
     public void handleReply(Reply reply){
+    	
     	int replyStatus = reply.getStatusCode();
     	String replyErrMsg = reply.getErrMsg();
     	ArrayList<String> payloads = reply.getPayLoads();
+    	for(int i=0;i<payloads.size();i++){
+		System.out.printf("--%s\n",payloads.get(i));
+    	}
     	if(Constant.DEBUG) {
 			for (int i = 0; i < payloads.size(); i++) {
 				System.out.println(payloads.get(i));
