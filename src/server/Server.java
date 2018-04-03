@@ -114,7 +114,8 @@ public class Server {
                 return "Invalid_operation";
         }
         String error = sendReply(reply, clientAddress, clientPort);
-        if(error == null && reply.getStatusCode() == Reply.SUCCESS_REPLY_CODE && request.getType()!= Request.MONITOR) {
+        if(error == null && reply.getStatusCode() == Reply.SUCCESS_REPLY_CODE && request.getType()!= Request.MONITOR
+                && request.getType()!= Request.BALANCE) {
             MonitoringTools.updateClients(request, reply, socket);
         }
         if(Constant.DEBUG) {
