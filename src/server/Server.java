@@ -89,20 +89,21 @@ public class Server {
         Reply reply = null;
         switch (request.getType()) {
             case Request.SIGN_UP:
-                reply =  processSignupRequest(request, requestKey);
+                reply =  processSignupRequest(request);
                 break;
             case Request.CLOSE:
-                reply =  processCloseRequest(request, requestKey);
+                reply =  processCloseRequest(request);
                 break;
 //            case Request.WITHDRAW:
 //                return processEditBookingRequest(request, requestKey);
             case Request.DEPOSIT:
-                reply = processDeposit(request, requestKey);
+                reply = processDeposit(request);
                 break;
 //            case Request.BALANCE:
 //                return processCancelBookingRequest(request, requestKey);
-//            case Request.TRANSFER:
-//                return processGetAllAvailableInTimeRangeRequest(request, requestKey);
+            case Request.TRANSFER:
+                reply =  processTransferRequest(request);
+                break;
             default:
                 return "Invalid_operation";
         }
@@ -120,7 +121,7 @@ public class Server {
         return null;
     }
 
-    public Reply processSignupRequest(Request request, String requestKey) {
+    public Reply processSignupRequest(Request request) {
         List<String>result = new ArrayList<>();
         result.add(request.getType());
         List<String>payLoads = request.getPayLoads();
@@ -134,7 +135,7 @@ public class Server {
         return reply;
     }
 
-    public Reply processCloseRequest(Request request, String requestKey) {
+    public Reply processCloseRequest(Request request) {
         boolean hasError = false;
         List<String>result = new ArrayList<>();
         result.add(request.getType());
@@ -149,14 +150,14 @@ public class Server {
             result.add(authCheck);
         } else {
             // close account here
-            String msg = BankingSystem.deleteUser(userName, passWord, accountNumber);
+            String msg = BankingSystem.deleteUser(accountNumber);
             result.add(msg);
         }
         Reply reply = Reply.constructReply(hasError, result);
         return reply;
     }
     
-    public Reply processCheckBalance(Request request, String requestKey) {
+    public Reply processCheckBalance(Request request) {
         boolean hasError = false;
         List<String>payLoads = request.getPayLoads();
         String userName = payLoads.get(0);
@@ -186,7 +187,8 @@ public class Server {
         String userName = payLoads.get(0);
         Integer accountNumber = Integer.valueOf(payLoads.get(1));
         String passWord = payLoads.get(2);
-        
+        Currency currency = Currency.valueFromString(payLoads.get(3));
+        Double amount = Double.valueOf(payLoads.get(4));
         List<String>result = new ArrayList<>();
         result.add(request.getType());
         // User authentication
@@ -197,13 +199,17 @@ public class Server {
             Reply reply = Reply.constructReply(hasError, result);
             return reply;
         }
-    	Double balance = BankingSystem.deposit(payLoads);
+    	Double balance = BankingSystem.deposit(accountNumber, currency, amount);
     	result.add(Double.toString(balance));
-    	result.add(BankingSystem.getUser(accountNumber).getCurrency().getAbbrv());
+    	result.add(currency.getAbbrv());
     	Reply reply = Reply.constructReply(hasError, result);
         return reply;
     } 
    
+
+    public Reply processTransferRequest(Request request) {
+
+    }
 
     public String sendReply(Reply reply, InetAddress clientHost, int clientPort) {
         byte[] data = Reply.marshal(reply);

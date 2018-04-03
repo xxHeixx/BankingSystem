@@ -19,7 +19,6 @@ public class BankingSystem {
     }
 
     public static Integer createUser(String userName, String password, Currency currency, Double balance) {
-
         AccountInfo userInfo = AccountInfo.createNewAccount(userName, currency, balance);
         Integer accountId = userInfo.getAccountId();
         index.put(accountId, userInfo);
@@ -27,7 +26,7 @@ public class BankingSystem {
         return accountId;
     }
 
-    public static String deleteUser(String userName, String password, Integer accountId) {
+    public static String deleteUser(Integer accountId) {
         String msg;
         try {
             index.remove(accountId);
@@ -45,10 +44,7 @@ public class BankingSystem {
     	return index.get(accountNum);
     }
     
-    public static Double deposit(List<String> payLoads) {
-    	Integer accountId = Integer.valueOf(payLoads.get(1));
-    	Currency currency = Currency.valueFromString(payLoads.get(3));
-        Double amount = Double.valueOf(payLoads.get(4));
+    public static Double deposit(Integer accountId, Currency currency, Double amount) {
         addMoney(accountId, currency, amount);
         AccountInfo user = index.get(accountId);
         return user.getBalance();
