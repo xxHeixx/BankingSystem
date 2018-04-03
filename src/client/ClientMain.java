@@ -13,9 +13,9 @@ public class ClientMain {
 	private static final String INSTRUCTION = "Input your operation (input h for help):\n";
 	private static final String HELPTEXT 
 		= "List of available operations (parameters must be seperated by ','):\n\n"
-		+ "Sign up new account: s,<name>,<password>,<currency>,<initial_balance>\n"
+		+ "Account sign up: s,<name>,<password>,<currency>,<initial_balance>\n"
 		+ "Close account: c,<name>,<account_number>,<password>\n"
-		+ "Check account's balance: b,<name>,<account_number>,<password>\n"
+		+ "Check balance: b,<name>,<account_number>,<password>\n"
 		+ "Deposit money: d,<name>,<account_number>,<password>,<currency>,<amount>\n"
 		+ "Withdraw money: w,<name>,<account_number>,<password>,<currency>,<amount>\n"
 		+ "Transfer money: t,<name>,<account_number>,<password>,<received_account_number>,<currency>,<amount>\n";
@@ -43,22 +43,29 @@ public class ClientMain {
                 System.out.println(HELPTEXT);
                 continue;
             } else {
-                switch (params[0]) {
+            	error = InputChecking.checkSyntax(params);
+            	if (error!=InputChecking.CORRECT){
+            		System.out.printf("Input Error: %s\n", error);
+            		continue;
+            	}
+            	switch (params[0]) {
                 case Request.SIGN_UP:
                 case Request.CLOSE:
                 case Request.BALANCE:
                 case Request.DEPOSIT:
-                case Request.TRANSFER:
                 case Request.WITHDRAW:
-                    ArrayList<String> data = new ArrayList<>(Arrays.asList(params));
+                case Request.TRANSFER:
+                	ArrayList<String> data = new ArrayList<>(Arrays.asList(params));
                 	error = client.sendRequest(params[0],data);
                     if (error != null) {
-                        System.out.printf("Error with operation %s: %s\n",params[0], error);
+                        System.out.printf("Client Error with operation %s: %s\n",params[0], error);
                     }
                     break;
                 default:
                     System.out.println("Invalid operation, please input again (input h for help)\n");
+                    continue;
                 }
+                
             }
         }
 
