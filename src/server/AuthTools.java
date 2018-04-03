@@ -1,13 +1,10 @@
 package server;
 
 import javafx.util.Pair;
-import shared.ErrorCode;
 
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
-
-import shared.ErrorCode;
 
 
 public class AuthTools {

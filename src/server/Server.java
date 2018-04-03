@@ -107,15 +107,24 @@ public class Server {
             case Request.TRANSFER:
                 reply =  processTransferRequest(request);
                 break;
+            case Request.MONITOR:
+                reply = processMonitorRequest(request, clientAddress, clientPort);
+                break;
             default:
                 return "Invalid_operation";
         }
         String error = sendReply(reply, clientAddress, clientPort);
-        List<String>payLoads = reply.getPayLoads();
-        for(int i=0;i<payLoads.size();i++){
-            System.out.println( "--" + payLoads.get(i));
+        if(error == null && reply.getStatusCode() == Reply.SUCCESS_REPLY_CODE && request.getType()!= Request.MONITOR) {
+            MonitoringTools.updateClients(request, reply, socket);
+        }
+        if(Constant.DEBUG) {
+            List<String> payLoads = reply.getPayLoads();
+            for (int i = 0; i < payLoads.size(); i++) {
+                System.out.println("--" + payLoads.get(i));
+            }
         }
         if (error != null) {
+            System.out.println(error);
             return error;
         }
         if (mode == InvocationSemantics.AT_MOST_ONCE) {
@@ -286,13 +295,25 @@ public class Server {
         return reply;
     }
 
+    public Reply processMonitorRequest(Request request, InetAddress clientHost, int clientPort) {
+        List<String> result = new ArrayList<>();
+        result.add(Request.MONITOR);
+        List<String> payLoads = request.getPayLoads();
+        Long duration = Long.valueOf(payLoads.get(0));
+        ClientMonitor client = new ClientMonitor(clientHost, clientPort);
+        MonitoringTools.registerClient(client, socket, duration);
+        result.add(Constant.START_MONITOR);
+        Reply reply = Reply.constructReply(false, result);
+        return reply;
+    }
+
     public String sendReply(Reply reply, InetAddress clientHost, int clientPort) {
         byte[] data = Reply.marshal(reply);
         DatagramPacket packet = new DatagramPacket(data, data.length, clientHost, clientPort);
+        socket.sendPacket(packet);
         if (socket.getErrMsg() != null) {
             return socket.getErrMsg();
         }
-        socket.sendPacket(packet);
         return null;
     }
 }
