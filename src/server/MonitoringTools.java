@@ -16,6 +16,7 @@ public class MonitoringTools {
     private static ArrayList<ClientMonitor> clientList = new ArrayList<>();
     private static final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
+    // Add monitoring client to the clientList
     public static void registerClient(ClientMonitor client, SocketWrapper serverSocket, Long duration) {
         clientList.add(client);
         scheduler.schedule(new Runnable() {
@@ -34,6 +35,7 @@ public class MonitoringTools {
         return ;
     }
 
+    // Send monitoring reply to all client in clientList
     public static void updateClients(Request request, Reply reply, SocketWrapper serverSocket) {
         Reply monitorReply = constructMonitorReply (request, reply);
         byte[] data = Reply.marshal(monitorReply);
@@ -46,6 +48,7 @@ public class MonitoringTools {
         }
     }
 
+    // Construct monitor reply from request and reply type and payloads
     private static Reply constructMonitorReply(Request request, Reply reply){
         List<String>result = new ArrayList<>();
         // Add request type to Payload

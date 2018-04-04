@@ -7,7 +7,6 @@ public enum ErrorCode {
     ERROR_DELETE_ACCOUNT ("Error while trying to delete the account"),
     INSUFFICIENT_BALANCE("User has insufficient balance"),
     INVALID_RECEIVER_ID("Invalid receiver account number"),
-    CLIENT_NOT_EXPIRE("Client is still in monitoring mode")
     ;
     private String msg;
     ErrorCode(String msg) {

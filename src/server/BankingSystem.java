@@ -9,6 +9,7 @@ public class BankingSystem {
 
     private static Map<Integer, AccountInfo> index = new HashMap<Integer, AccountInfo>();
 
+    // Check user authentication, return null if correct info
     public static String checkUser(Integer accountNumber, String password, String userName) {
         ErrorCode errorCode = AuthTools.checkUser(accountNumber, password, userName);
         if (errorCode == null) {
@@ -17,6 +18,7 @@ public class BankingSystem {
         return errorCode.getMsg();
     }
 
+    // Create new account, return account number
     public static Integer createUser(String userName, String password, Currency currency, Double balance) {
         AccountInfo userInfo = AccountInfo.createNewAccount(userName, currency, balance);
         Integer accountId = userInfo.getAccountId();
@@ -25,6 +27,7 @@ public class BankingSystem {
         return accountId;
     }
 
+    // Delete account
     public static String deleteUser(Integer accountId) {
         String msg = null;
         try {
@@ -41,13 +44,15 @@ public class BankingSystem {
     public static AccountInfo getUser(int accountNum){
     	return index.get(accountNum);
     }
-    
+
+    // Deposit money into account
     public static Double deposit(Integer accountId, Currency currency, Double amount) {
         addMoney(accountId, currency, amount);
         AccountInfo user = index.get(accountId);
         return user.getBalance();
     }
 
+    // Withdraw money from account
     public static String withdraw(Integer accountId, Currency currency, Double amount) {
         Integer withdrawResult = addMoney(accountId, currency, amount * -1);
         if (withdrawResult < 0) {
@@ -56,6 +61,7 @@ public class BankingSystem {
         return null;
     }
 
+    // Transfer money between accounts
     public static String transferMoney(int senderAccountId, int receiverAccountId, double amount, Currency currency) {
         if (!index.containsKey(receiverAccountId)) {
             return ErrorCode.INVALID_RECEIVER_ID.getMsg();

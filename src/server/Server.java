@@ -144,7 +144,8 @@ public class Server {
         return null;
     }
 
-    public Reply processSignupRequest(Request request) {
+    // Construct Reply for SignUp request
+    private Reply processSignupRequest(Request request) {
         List<String>result = new ArrayList<>();
         result.add(request.getType());
         List<String>payLoads = request.getPayLoads();
@@ -158,7 +159,8 @@ public class Server {
         return reply;
     }
 
-    public Reply processCloseRequest(Request request) {
+    // Construct Reply for Close request
+    private Reply processCloseRequest(Request request) {
         boolean hasError = false;
         List<String>result = new ArrayList<>();
         result.add(request.getType());
@@ -185,8 +187,9 @@ public class Server {
         Reply reply = Reply.constructReply(hasError, result);
         return reply;
     }
-    
-    public Reply processCheckBalance(Request request) {
+
+    // Construct Reply for check Balance request
+    private Reply processCheckBalance(Request request) {
         boolean hasError = false;
         List<String>payLoads = request.getPayLoads();
         String userName = payLoads.get(0);
@@ -208,9 +211,10 @@ public class Server {
     	result.add(BankingSystem.getUser(accountNumber).getCurrency().getAbbrv());
     	Reply reply = Reply.constructReply(hasError, result);
         return reply;
-    } 
-    
-    public Reply processDeposit(Request request) {
+    }
+
+    // Construct Reply for Deposit request
+    private Reply processDeposit(Request request) {
         boolean hasError = false;
         List<String>payLoads = request.getPayLoads();
         String userName = payLoads.get(0);
@@ -235,7 +239,8 @@ public class Server {
         return reply;
     }
 
-    public Reply processWithdraw(Request request) {
+    // Construct Reply for Withdraw request
+    private Reply processWithdraw(Request request) {
         boolean hasError = false;
         List<String>result = new ArrayList<>();
         result.add(request.getType());
@@ -268,9 +273,9 @@ public class Server {
         Reply reply = Reply.constructReply(hasError, result);
         return reply;
     }
-   
 
-    public Reply processTransferRequest(Request request) {
+    // Construct reply for Transfer request
+    private Reply processTransferRequest(Request request) {
         boolean hasError = false;
         List<String>result = new ArrayList<>();
         result.add(request.getType());
@@ -306,7 +311,8 @@ public class Server {
         return reply;
     }
 
-    public Reply processMonitorRequest(Request request, InetAddress clientHost, int clientPort) {
+    // Construct reply for Monitoring request
+    private Reply processMonitorRequest(Request request, InetAddress clientHost, int clientPort) {
         List<String> result = new ArrayList<>();
         result.add(Request.MONITOR);
         List<String> payLoads = request.getPayLoads();
@@ -323,7 +329,8 @@ public class Server {
         return reply;
     }
 
-    public String sendReply(Reply reply, InetAddress clientHost, int clientPort) {
+    // Send reply to client
+    private String sendReply(Reply reply, InetAddress clientHost, int clientPort) {
         // Simulate reply loss
         counter ++;
         if (counter % lossFreq == 0) {
