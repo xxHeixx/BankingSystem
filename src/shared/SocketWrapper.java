@@ -12,7 +12,7 @@ public class SocketWrapper {
     private int port;
     private String errMsg;
 
-    public static final String TIMEOUT = "timeout";
+    public static final String TIMEOUT = "Time Out";
     public static final int timeout = 10000;
     public static final int MAX_PACKET_SIZE = 32768;
 
