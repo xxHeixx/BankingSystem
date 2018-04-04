@@ -24,7 +24,7 @@ public class ClientString {
 	public static final String CLOSE_MSG = "Your account has been closed successfully\n";
 	public static final String BALANCE_MSG = "Your account's balance: %.2f %s\n";
 	public static final String DEPOSIT_MSG = "Your money has been deposited successfully. New balance: %.2f %s\n";
-	public static final String WITHDRAW_MSG = "Your money has been withdrew successfully. New balance: %.2f %s\n";
+	public static final String WITHDRAW_MSG = "Your money has been withdrawn successfully. New balance: %.2f %s\n";
 	public static final String TRANSFER_MSG = "Your money has been transfered successfully. New balance: %.2f %s\n"; 
 	
 	public static final String START_MONITOR_MSG = "Starting monitoring...\n";

@@ -28,8 +28,8 @@ public class Client {
     }
     
     // Send a marshaled request to the server and wait for reply
-    private String sendRequest(String requestId, ArrayList<String> payloads){
-    	Request request = Request.createRequest(requestId, payloads.subList(1,payloads.size()));
+    private String sendRequest(String requestType, ArrayList<String> payloads){
+    	Request request = Request.createRequest(requestType, payloads.subList(1,payloads.size()));
     	byte[] data = Request.marshal(request);
         DatagramPacket sendPacket = new DatagramPacket(data, data.length, serverIp, serverPort);
     	socket.sendPacket(sendPacket);
@@ -125,7 +125,7 @@ public class Client {
         		System.out.printf(ClientString.ERR_MSG, error);
         	} else {
 	            error = handleMonitorReply(reply);
-	            if (error.equals(Constant.STOP_MONITOR)){
+	            if (error!=null && error.equals(Constant.STOP_MONITOR)){
 	            	break;
 	            } else if (error!=null){
 	            	System.out.printf(ClientString.ERR_MSG,error);
